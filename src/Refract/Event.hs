@@ -1,12 +1,11 @@
 module Refract.Event
     ( Event
-    , Filter
+    , base
+    , filters
     ) where
 
-class Filter a where
-    pass :: a -> Bool
-    pass _ = True
 
-class (Filter a) => Event a where
-    filters :: [a]
-    filters = [ ]
+class Event a where
+    filters   :: a -> [a -> Bool]
+    filters _ = [ ]
+    base :: a

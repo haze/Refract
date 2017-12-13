@@ -16,6 +16,9 @@ build-type:          Simple
 extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
+Flag library-only
+    Default:       False
+
 Test-Suite test-mirror-event-associate
     type:                 exitcode-stdio-1.0
     hs-source-dirs:       test, src
@@ -25,6 +28,8 @@ Test-Suite test-mirror-event-associate
         Refract.Bus,
         Refract.Event
     default-language:     Haskell2010
+    if flag(library-only)
+        Buildable: False
 
 Test-Suite test-mirror-event-fire
     type:                 exitcode-stdio-1.0
@@ -35,6 +40,32 @@ Test-Suite test-mirror-event-fire
         Refract.Bus,
         Refract.Event
     default-language:     Haskell2010
+    if flag(library-only)
+        Buildable: False
+
+Test-Suite test-mirror-event-filter
+    type:                 exitcode-stdio-1.0
+    hs-source-dirs:       test, src
+    main-is:              FilterTest.hs
+    build-depends:        base
+    other-modules:
+        Refract.Bus,
+        Refract.Event
+    default-language:     Haskell2010
+    if flag(library-only)
+        Buildable: False
+
+Test-Suite test-mirror-event-priority
+    type:                 exitcode-stdio-1.0
+    hs-source-dirs:       test, src
+    main-is:              PriorityTest.hs
+    build-depends:        base
+    other-modules:
+        Refract.Bus,
+        Refract.Event
+    default-language:     Haskell2010
+    if flag(library-only)
+        Buildable: False
 
 library
   build-depends:       base >=4.10 && <4.11

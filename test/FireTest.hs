@@ -19,7 +19,7 @@ showMessage' (MessageEvent msg) = putStrLn $ "second: " ++ msg
 
 main :: IO ()
 main = do
-    bus <- createBlankBus (MessageEvent "fuck")
+    bus <- createBlankBus (MessageEvent "test")
     associate showMessage bus
     associate showMessage' bus
     fire (MessageEvent "test, 1.") bus

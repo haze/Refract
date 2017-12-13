@@ -3,8 +3,6 @@ module Refract.Event
     , Filter
     ) where
 
-
-
 class Filter a where
     pass :: a -> Bool
     pass _ = True

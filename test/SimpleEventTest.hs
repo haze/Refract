@@ -1,9 +1,9 @@
 module Main where
 
 import qualified Control.Concurrent.MVar as M
-import System.Exit (exitSuccess, exitFailure)
-import Refract.Event
-import Refract.Bus
+import           Refract.Bus
+import           Refract.Event
+import           System.Exit             (exitFailure, exitSuccess)
 
 newtype MessageEvent = MessageEvent String
 instance Filter MessageEvent where

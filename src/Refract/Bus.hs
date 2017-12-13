@@ -15,25 +15,23 @@ instance (Show e, Event e) => Show (Bus e [e -> IO () ]) where
 
 
 events bus = do
-    z <- bus
-    (Bus _ fs) <- M.readMVar z
+    (Bus _ fs) <- M.readMVar bus
     return fs
 
 createBlankBus :: Event e => e -> IO ( M.MVar (Bus e f) )
 createBlankBus ev = M.newMVar $ Bus ev []
 
-operate :: Event a => ([a -> IO ()] -> [a -> IO ()]) -> IO (M.MVar (Bus a f)) -> IO ()
-operate fn bus = bus >>= \z -> M.modifyMVar_ z (\(Bus ev fs) -> return $ Bus ev $ fn fs)
+operate :: Event a => ([a -> IO ()] -> [a -> IO ()]) -> M.MVar (Bus a f) -> IO ()
+operate fn bus = M.modifyMVar_ bus (\(Bus ev fs) -> return $ Bus ev $ fn fs)
 
-associate :: Event a => (a -> IO ()) -> IO (M.MVar (Bus a f)) -> IO ()
+associate :: Event a => (a -> IO ()) -> M.MVar (Bus a f) -> IO ()
 associate func = operate (func :)
 
-dissociate :: (Event a, Eq (a -> IO ())) => (a -> IO ()) -> IO (M.MVar (Bus a f)) -> IO ()
+dissociate :: (Event a, Eq (a -> IO ())) => (a -> IO ()) -> M.MVar (Bus a f) -> IO ()
 dissociate func = operate (filter (/= func))
 
-fire :: (Event a) => a -> IO (M.MVar (Bus a f)) -> IO ()
-fire ev _bus = do
-    z <- _bus
-    bus <- M.readMVar z
+fire :: (Event a) => a -> M.MVar (Bus a f) -> IO ()
+fire ev bus = do
+    bus <- M.readMVar bus
     let (Bus _ fs) = bus
     for_ fs ($ ev)

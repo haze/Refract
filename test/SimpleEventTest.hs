@@ -17,9 +17,8 @@ showMessage (MessageEvent msg) = putStrLn msg
 
 main :: IO ()
 main = do
-    let bus = createBlankBus (base :: MessageEvent)
-    rb <- bus
-    (Bus _ before) <- M.readMVar rb
+    bus <- createBlankBus (base :: MessageEvent)
+    (Bus _ before) <- M.readMVar bus
     associate showMessage bus
-    (Bus _ after) <- M.readMVar rb
+    (Bus _ after) <- M.readMVar bus
     if length before == length after then exitFailure else exitSuccess

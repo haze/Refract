@@ -16,10 +16,20 @@ build-type:          Simple
 extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
-Test-Suite test-mirror-event
+Test-Suite test-mirror-event-associate
     type:                 exitcode-stdio-1.0
     hs-source-dirs:       test, src
     main-is:              SimpleEventTest.hs
+    build-depends:        base
+    other-modules:
+        Refract.Bus,
+        Refract.Event
+    default-language:     Haskell2010
+
+Test-Suite test-mirror-event-fire
+    type:                 exitcode-stdio-1.0
+    hs-source-dirs:       test, src
+    main-is:              FireTest.hs
     build-depends:        base
     other-modules:
         Refract.Bus,

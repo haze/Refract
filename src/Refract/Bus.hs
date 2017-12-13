@@ -7,16 +7,10 @@ import qualified Control.Concurrent.MVar as M
 import           Data.Foldable           (for_)
 import           Refract.Event
 
-
 data Bus a f where Bus :: Event e => e -> [ e -> IO () ] -> Bus e f
 
 instance (Show e, Event e) => Show (Bus e [e -> IO () ]) where
     show (Bus ev f) = "Bus<" ++ show ev ++ "> [" ++ show (length f) ++ "]"
-
-
-events bus = do
-    (Bus _ fs) <- M.readMVar bus
-    return fs
 
 createBlankBus :: Event e => e -> IO ( M.MVar (Bus e f) )
 createBlankBus ev = M.newMVar $ Bus ev []
@@ -31,7 +25,5 @@ dissociate :: (Event a, Eq (a -> IO ())) => (a -> IO ()) -> M.MVar (Bus a f) -> 
 dissociate func = operate (filter (/= func))
 
 fire :: (Event a) => a -> M.MVar (Bus a f) -> IO ()
-fire ev bus = do
-    bus <- M.readMVar bus
-    let (Bus _ fs) = bus
-    for_ fs ($ ev)
+fire ev bus = M.readMVar bus >>= runAll
+    where runAll (Bus _ fs) = for_ (reverse fs) ($ ev)

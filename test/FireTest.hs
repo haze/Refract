@@ -5,21 +5,23 @@ import           Refract.Bus
 import           Refract.Event
 import           System.Exit             (exitFailure, exitSuccess)
 
-newtype IntEvent = IntEvent Int
-instance Event IntEvent where
-    base = IntEvent 0
+newtype MessageEvent = MessageEvent String
+instance Filter MessageEvent where
+instance Event MessageEvent where
 
-showMessage :: IntEvent -> IO ()
-showMessage (IntEvent msg) = print msg
+showMessage :: MessageEvent -> IO ()
+showMessage (MessageEvent msg) = putStrLn msg
 
-showMessage' :: IntEvent -> IO ()
-showMessage' (IntEvent msg) = putStrLn $ "second: " ++ show msg
+showMessage' :: MessageEvent -> IO ()
+showMessage' (MessageEvent msg) = putStrLn $ "second: " ++ msg
+
+
 
 main :: IO ()
 main = do
-    bus <- createBlankBus (base :: IntEvent)
+    bus <- createBlankBus (MessageEvent "test")
     associate' showMessage bus
     associate' showMessage' bus
-    fire (IntEvent 1) bus
-    fire (IntEvent 2) bus
-    fire (IntEvent 3) bus
+    fire (MessageEvent "test, 1.") bus
+    fire (MessageEvent "test, 2.") bus
+    fire (MessageEvent "test, 3.") bus

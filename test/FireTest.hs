@@ -15,13 +15,11 @@ showMessage (MessageEvent msg) = putStrLn msg
 showMessage' :: MessageEvent -> IO ()
 showMessage' (MessageEvent msg) = putStrLn $ "second: " ++ msg
 
-
-
 main :: IO ()
 main = do
     bus <- createBlankBus (MessageEvent "test")
     associate' showMessage bus
     associate' showMessage' bus
-    fire (MessageEvent "test, 1.") bus
-    fire (MessageEvent "test, 2.") bus
-    fire (MessageEvent "test, 3.") bus
+    fire bus (MessageEvent "test, 1.")
+    fire bus (MessageEvent "test, 2.")
+    fire bus (MessageEvent "test, 3.")

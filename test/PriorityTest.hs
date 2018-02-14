@@ -22,4 +22,4 @@ main = do
     bus <- R.createBlankBus (base :: MessageEvent)
     R.associate' showMessage' bus
     R.associate 0 showMessage bus
-    R.fire (MessageEvent "hello") bus
+    R.fire bus (MessageEvent "hello")

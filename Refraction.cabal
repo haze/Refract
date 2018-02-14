@@ -68,7 +68,7 @@ Test-Suite test-mirror-event-priority
         Buildable: False
 
 library
-  build-depends:       base >=4.10 && <4.11
+  build-depends:       base >=4.8
   hs-source-dirs:      src
   exposed-modules:
     Refract.Event,

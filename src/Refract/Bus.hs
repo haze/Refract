@@ -6,15 +6,18 @@ module Refract.Bus
     ( createBlankBus
     , associate
     , associate'
+    , batchAssociate
+    , batchAssociate'
     , dissociate
     , fire
+    , PrioritizedFunction(..)
     , Bus(..) ) where
 
 import qualified Control.Concurrent.MVar as M
 import           Control.Monad
 import           Data.Foldable           (for_)
+import           Data.List               (sortBy)
 import           Refract.Event
-import Data.List (sortBy)
 
 data PrioritizedFunction e = PrioritizedFunction Int ( e -> IO () )
 data Bus a f where Bus :: Event e => e -> [ PrioritizedFunction e ] -> Bus e f
@@ -40,13 +43,19 @@ associate priority func = operate (PrioritizedFunction priority func :)
 associate' :: (a -> IO ()) -> M.MVar (Bus a f) -> IO ()
 associate' = associate 1
 
+batchAssociate :: Int -> [(a -> IO ())] -> M.MVar (Bus a f) -> [IO ()]
+batchAssociate priority = mapM (associate priority)
+
+batchAssociate' :: [(a -> IO())] -> M.MVar (Bus a f) -> [IO ()]
+batchAssociate' = batchAssociate 1
+
 dissociate :: Eq (PrioritizedFunction a) => PrioritizedFunction a -> M.MVar (Bus a f) -> IO ()
 dissociate func = operate (filter (/= func))
 
 combineFilters :: [a -> Bool] -> (a -> Bool)
 combineFilters = foldr (liftM2 (&&)) $ const True
 
-fire :: (Event a) => a -> M.MVar (Bus a f) -> IO ()
-fire ev bus = when (combined ev) $ M.readMVar bus >>= runAll
+fire :: (Event a) => M.MVar (Bus a f) -> a -> IO ()
+fire bus ev = when (combined ev) $ M.readMVar bus >>= runAll
     where runAll (Bus _ fs) = for_ (sortBy pCompare $ reverse fs) (`priorityFunc` ev)
           combined = combineFilters $ filters ev

@@ -21,6 +21,6 @@ main :: IO ()
 main = do
     bus <- R.createBlankBus (base :: MessageEvent)
     R.associate' showMessage bus
-    R.fire (MessageEvent "12") bus
-    R.fire (MessageEvent "1234") bus
-    R.fire (MessageEvent "124567") bus
+    R.fire bus (MessageEvent "12")
+    R.fire bus (MessageEvent "1234")
+    R.fire bus (MessageEvent "124567")
